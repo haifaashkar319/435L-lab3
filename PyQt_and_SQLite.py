@@ -21,18 +21,70 @@ Instructor.create_database()
 Course.create_database()
 
 class RecordTableModel(QAbstractTableModel):
+    """
+    A custom table model that displays data using PyQt5's QAbstractTableModel.
+
+    This class is designed to handle a list of records and display them in a table
+    with headers. It overrides the basic methods for determining row/column counts
+    and providing data to the table view.
+
+    Attributes:
+        records (list): A list of records, where each record is typically a list or tuple
+            representing a row in the table.
+        headers (list): A list of column headers for the table.
+    """
+    
     def __init__(self, records, headers, parent=None):
+        """
+        Initialize the table model with records and headers.
+
+        Args:
+            records (list): The data for the table, a list of rows, where each row is a list or tuple.
+            headers (list): The column headers for the table.
+            parent (QWidget, optional): The parent widget of the table model. Defaults to None.
+        """
         super().__init__(parent)
         self.records = records
         self.headers = headers
 
     def rowCount(self, parent=None):
+        """
+        Return the number of rows in the table.
+
+        Args:
+            parent (QModelIndex, optional): The parent index, not used here. Defaults to None.
+
+        Returns:
+            int: The number of rows in the table, based on the number of records.
+        """
         return len(self.records)
 
     def columnCount(self, parent=None):
+        """
+        Return the number of columns in the table.
+
+        Args:
+            parent (QModelIndex, optional): The parent index, not used here. Defaults to None.
+
+        Returns:
+            int: The number of columns in the table, based on the length of the headers list.
+        """
         return len(self.headers)
 
     def data(self, index, role=Qt.DisplayRole):
+        """
+        Provide data for the given index and role.
+
+        This method is called by the view to get the data to display.
+
+        Args:
+            index (QModelIndex): The index of the cell that needs data.
+            role (Qt.ItemDataRole): The role for which data is requested (e.g., display role).
+
+        Returns:
+            QVariant: The data for the requested index and role, or an invalid QVariant if
+            the index is invalid or the role is not supported.
+        """
         if not index.isValid():
             return QVariant()
 
@@ -42,12 +94,44 @@ class RecordTableModel(QAbstractTableModel):
         return QVariant()
 
     def headerData(self, section, orientation, role=Qt.DisplayRole):
+        """
+        Provide header data for the table, either for rows or columns.
+
+        Args:
+            section (int): The section (row or column) number for which header data is requested.
+            orientation (Qt.Orientation): The orientation (horizontal or vertical) of the header.
+            role (Qt.ItemDataRole): The role for which the header data is requested.
+
+        Returns:
+            QVariant: The header data for the requested section and role, or an invalid QVariant
+            if the role or orientation is not supported.
+        """
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
             return QVariant(self.headers[section])
         return QVariant()
 
 class MainWindow(QMainWindow):
+    """
+    Main window class for the School Management System.
+
+    This class provides the user interface (UI) for managing students, instructors,
+    courses, registrations, and assignments within a school system. The window consists 
+    of multiple tabs, each handling different aspects of the management system such as 
+    adding students, instructors, courses, registering students to courses, and assigning 
+    instructors to courses.
+
+    Attributes:
+        students (list): A list of student records (initially empty).
+        instructors (list): A list of instructor records (initially empty).
+        courses (list): A list of course records (initially empty).
+    """
     def __init__(self):
+        """
+        Initializes the main window of the School Management System.
+        
+        Sets up the window's title, size, and initializes the user interface by creating
+        tabs for different system operations.
+        """
         super().__init__()
         self.setWindowTitle("School Management System")
         self.setGeometry(100, 100, 800, 800)
@@ -59,6 +143,13 @@ class MainWindow(QMainWindow):
         self.initUI()
 
     def initUI(self):
+        """
+        Initializes the user interface by creating tabs for student, instructor, course 
+        management, registration, assignment, and record viewing.
+        
+        This method sets up the main tab widget and calls methods to set up each tab's 
+        individual layout and components.
+        """
         # Create tabs
         tabs = QTabWidget()
         self.setCentralWidget(tabs)
@@ -86,6 +177,12 @@ class MainWindow(QMainWindow):
         self.initViewTab()
 
     def initStudentTab(self):
+        """
+        Initializes the UI layout and components for the 'Student' tab.
+        
+        The 'Student' tab allows users to add a student by entering their name, age, email, 
+        and student ID, then clicking the "Add Student" button.
+        """
         layout = QVBoxLayout()
         
         # Form Layout
@@ -115,6 +212,12 @@ class MainWindow(QMainWindow):
 
 
     def initInstructorTab(self):
+        """
+        Initializes the UI layout and components for the 'Instructor' tab.
+        
+        The 'Instructor' tab allows users to add an instructor by entering their name, age, 
+        email, and instructor ID, then clicking the "Add Instructor" button.
+        """
         layout = QVBoxLayout()
         form_layout = QFormLayout()
         
@@ -137,6 +240,12 @@ class MainWindow(QMainWindow):
         self.instructor_tab.setLayout(layout)
 
     def initCourseTab(self):
+        """
+        Initializes the UI layout and components for the 'Course' tab.
+        
+        The 'Course' tab allows users to add a course by entering the course name, course ID,
+        and selecting an instructor from a combo box, then clicking the "Add Course" button.
+        """
         layout = QVBoxLayout()
         form_layout = QFormLayout()
         
@@ -156,6 +265,12 @@ class MainWindow(QMainWindow):
         self.course_tab.setLayout(layout)
 
     def initRegisterTab(self):
+        """
+        Initializes the UI layout and components for the 'Register' tab.
+        
+        The 'Register' tab allows users to register students to courses by selecting a student
+        and a course from combo boxes, then clicking the "Register" button.
+        """
         layout = QVBoxLayout()
         form_layout = QFormLayout()
         
@@ -173,6 +288,12 @@ class MainWindow(QMainWindow):
         self.register_tab.setLayout(layout)
 
     def initAssignTab(self):
+        """
+        Initializes the UI layout and components for the 'Assign' tab.
+        
+        The 'Assign' tab allows users to assign instructors to courses by selecting an instructor
+        and a course from combo boxes, then clicking the "Assign" button.
+        """
         layout = QVBoxLayout()
         form_layout = QFormLayout()
         
@@ -190,6 +311,13 @@ class MainWindow(QMainWindow):
         self.assign_tab.setLayout(layout)
 
     def initViewTab(self):
+        """
+        Initializes the UI layout and components for the 'View Records' tab.
+        
+        The 'View Records' tab allows users to view and manage records, including saving and loading
+        data, searching for specific records, and displaying them in a table view.
+        """
+        
         layout = QVBoxLayout()
         
         # Buttons
@@ -235,6 +363,12 @@ class MainWindow(QMainWindow):
         self.view_tab.setLayout(layout)
 
     def update_treeview(self):
+        """
+        Updates the data in the tree view for displaying records of students, instructors, and courses.
+        
+        This method fetches data from the SQLite database, formats it into a list, and sets it as the 
+        data source for the table view in the 'View Records' tab.
+        """
         headers = ["ID", "Name", "Type/Instructor"]
         records = []
 
@@ -273,6 +407,34 @@ class MainWindow(QMainWindow):
         self.tree_view.setModel(self.model)
 
     def refresh_dropdowns(self):
+        """
+    Refreshes the dropdown menus for instructors, students, and courses.
+
+    This method clears the current items in the instructor, student, and course-related
+    dropdown menus (combo boxes), then fetches the latest data from the SQLite database to
+    repopulate them. This ensures that the dropdowns are always up to date with the most
+    recent entries in the 'instructor', 'student', and 'course' tables.
+
+    The method performs the following operations:
+        - Clears the existing items in the combo boxes.
+        - Fetches instructor records and adds them to the appropriate instructor combo boxes.
+        - Fetches student records and adds them to the student combo box.
+        - Fetches course records and adds them to the course-related combo boxes.
+
+    The combo boxes updated by this method are:
+        - self.course_instructor_combo: Dropdown for selecting an instructor when adding a course.
+        - self.student_combo: Dropdown for selecting a student when registering them for a course.
+        - self.course_combo: Dropdown for selecting a course when registering a student.
+        - self.instructor_combo: Dropdown for selecting an instructor when assigning them to a course.
+        - self.course_combo_assign: Dropdown for selecting a course when assigning an instructor.
+
+    Database:
+        - Connects to the SQLite database 'school.db' to fetch the latest data from the 
+          'instructor', 'student', and 'course' tables.
+
+    Returns:
+        None
+    """
     # Clear existing items
         self.course_instructor_combo.clear()
         self.student_combo.clear()
@@ -314,6 +476,26 @@ class MainWindow(QMainWindow):
         conn.close()
 
     def add_student(self):
+        """
+    Adds a new student to the database and updates the UI.
+
+    This method retrieves the student's name, age, email, and student ID from the UI entries,
+    then inserts this information into the 'student' table in the SQLite database. After the
+    student is successfully added, it updates the tree view and refreshes the dropdown menus.
+
+    Input:
+        - Name, age, email, and student ID are retrieved from the corresponding UI elements.
+
+    Database:
+        - Inserts a new student record into the 'student' table.
+
+    Exceptions:
+        - Shows an error message if any exceptions occur during the process, such as 
+          invalid inputs or database connection issues.
+
+    Returns:
+        None
+    """
         try:
             name = self.student_name_entry.text()
             age = int(self.student_age_entry.text())
@@ -337,6 +519,26 @@ class MainWindow(QMainWindow):
             self.show_error_message("Error adding student", str(e))
 
     def add_instructor(self):
+        """
+    Adds a new instructor to the database and updates the UI.
+
+    This method retrieves the instructor's name, age, email, and instructor ID from the UI entries,
+    then inserts this information into the 'instructor' table in the SQLite database. After the
+    instructor is successfully added, it updates the tree view and refreshes the dropdown menus.
+
+    Input:
+        - Name, age, email, and instructor ID are retrieved from the corresponding UI elements.
+
+    Database:
+        - Inserts a new instructor record into the 'instructor' table.
+
+    Exceptions:
+        - Shows an error message if any exceptions occur during the process, such as 
+          invalid inputs or database connection issues.
+
+    Returns:
+        None
+    """
         try:
             name = self.instructor_name_entry.text()
             age = int(self.instructor_age_entry.text())
@@ -360,6 +562,24 @@ class MainWindow(QMainWindow):
             self.show_error_message("Error adding instructor", str(e))
 
     def add_course(self):
+        """
+    Adds a new course to the internal list and updates the UI.
+
+    This method retrieves the course name, course ID, and selected instructor from the UI entries,
+    creates a `Course` object, and adds it to the internal list of courses. It then updates the
+    tree view and refreshes the dropdown menus.
+
+    Input:
+        - Course name and course ID are retrieved from the UI entries.
+        - Instructor is retrieved from the course instructor dropdown (combo box).
+
+    Exceptions:
+        - Shows an error message if any exceptions occur during the process, such as 
+          invalid inputs.
+
+    Returns:
+        None
+    """
         try:
             course_name = self.course_name_entry.text()
             course_id = int(self.course_id_entry.text())
@@ -373,6 +593,27 @@ class MainWindow(QMainWindow):
             self.show_error_message("Error adding course", str(e))
 
     def register_student(self):
+        """
+    Registers a student for a course by inserting a record into the registration table.
+
+    This method retrieves the selected student and course IDs from the dropdown menus,
+    then inserts the student and course pairing into the 'registration' table in the SQLite database.
+    It then updates the tree view.
+
+    Input:
+        - Student ID and course ID are retrieved from the dropdown menus (combo boxes).
+
+    Database:
+        - Inserts a new record into the 'registration' table.
+
+    Exceptions:
+        - Shows an error message if any exceptions occur during the process, such as 
+          database connection issues.
+
+    Returns:
+        None
+    """
+    
         try:
             student_id = self.student_combo.currentData()  # Assume this returns the student ID
             course_id = self.course_combo.currentData()  # Assume this returns the course ID
@@ -394,6 +635,26 @@ class MainWindow(QMainWindow):
             self.show_error_message("Error registering student", str(e))
 
     def assign_instructor(self):
+        """
+    Assigns an instructor to a course by updating the course record in the database.
+
+    This method retrieves the selected course and instructor IDs from the dropdown menus,
+    then updates the instructor assignment in the 'course' table of the SQLite database.
+    After the instructor is assigned, it updates the tree view.
+
+    Input:
+        - Course ID and instructor ID are retrieved from the dropdown menus (combo boxes).
+
+    Database:
+        - Updates the 'instructor_id' field for the course in the 'course' table.
+
+    Exceptions:
+        - Shows an error message if any exceptions occur during the process, such as 
+          database connection issues.
+
+    Returns:
+        None
+    """
         try:
             instructor_id = self.instructor_combo.currentData()  # Assume this returns the instructor ID
             course_id = self.course_combo_assign.currentData()  # Assume this returns the course ID
@@ -414,7 +675,32 @@ class MainWindow(QMainWindow):
                 self.update_treeview()
         except Exception as e:
             self.show_error_message("Error assigning instructor", str(e))
+
     def search_records(self):
+        """
+    Searches for students, instructors, or courses in the database based on the input.
+
+    This method retrieves search parameters from the UI, such as a name or ID, and the type
+    of record (student, instructor, or course). It then queries the database for matching
+    records and displays the results in the tree view.
+
+    Input:
+        - Search parameters (name and ID) are retrieved from the UI entries.
+        - Search type is determined by the selected option (student, instructor, or course).
+
+    Database:
+        - Queries the relevant tables (student, instructor, course) and fetches records that match the criteria.
+
+    Output:
+        - Displays the search results in the tree view with columns "ID", "Name", and "Type/Instructor".
+
+    Exceptions:
+        - Shows an error message if any exceptions occur during the process, such as 
+          database connection issues.
+
+    Returns:
+        None
+    """
         try:
             search_name = self.search_name_entry.text()
             search_id = self.search_id_entry.text()
@@ -460,6 +746,28 @@ class MainWindow(QMainWindow):
             self.show_error_message("Error searching records", str(e))
 
     def save_data_to_file(self):
+        """
+    Saves all data (instructors, courses, students, and their relationships) from the SQLite database 
+    to a JSON file.
+
+    This method fetches all data from the 'instructor', 'course', 'student', and 'registration' tables
+    in the SQLite database. It organizes the data into dictionaries for instructors, courses, and students.
+    The relationships between students and courses, as well as instructors and courses, are also maintained
+    in the output JSON file. Each entity is then saved to 'school_data.json'.
+
+    Database:
+        - Fetches data from the 'instructor', 'course', 'student', and 'registration' tables.
+
+    Output:
+        - A JSON file ('school_data.json') containing all the data and relationships.
+
+    Exceptions:
+        - Displays an error message using `show_error_message()` if any exceptions occur during the process, 
+          such as issues with database connectivity or file writing.
+
+    Returns:
+        None
+    """
         try:
             filename = "school_data.json"  # Set the filename to save
             
@@ -541,6 +849,30 @@ class MainWindow(QMainWindow):
             self.show_error_message("Error saving data", str(e))
 
     def load_data_from_file(self):
+        """
+    Loads data from a JSON file into the SQLite database and updates the UI.
+
+    This method reads the 'school_data.json' file, which contains instructors, courses, students, 
+    and their relationships (such as registrations and course assignments). It inserts this data 
+    into the 'instructor', 'course', 'student', and 'registration' tables in the SQLite database. 
+    The UI elements such as the tree view and dropdowns are also updated with the loaded data.
+
+    Input:
+        - A JSON file ('school_data.json') containing instructors, courses, students, and relationships.
+
+    Database:
+        - Inserts data into the 'instructor', 'course', 'student', and 'registration' tables.
+
+    UI:
+        - Updates the tree view and dropdown menus to reflect the loaded data.
+
+    Exceptions:
+        - Displays an error message using `show_error_message()` if any exceptions occur during the process,
+          such as issues with file reading or database insertion.
+
+    Returns:
+        None
+    """
         try:
             filename = "school_data.json"  # Set the filename to load
             instructor_dict, student_dict, course_dict = load_data(filename)
@@ -595,6 +927,22 @@ class MainWindow(QMainWindow):
             self.show_error_message("Error loading data", str(e))
 
     def show_error_message(self, title, message):
+        """
+    Displays a critical error message in a message box.
+
+    This method is used to show an error message dialog with a specific title and message content
+    when an exception or an error occurs during the program's execution.
+
+    Input:
+        - title (str): The title of the error message box.
+        - message (str): The detailed error message to be displayed.
+
+    Output:
+        - A message box showing the error details.
+
+    Returns:
+        None
+    """
         msg_box = QMessageBox()
         msg_box.setIcon(QMessageBox.Critical)
         msg_box.setText(message)
@@ -602,6 +950,21 @@ class MainWindow(QMainWindow):
         msg_box.exec_()
 
     def show_info_message(self, message):
+        """
+    Displays an informational message in a message box.
+
+    This method is used to show a message dialog with a specified informational message content,
+    typically when a process, such as data saving or loading, has completed successfully.
+
+    Input:
+        - message (str): The message content to be displayed.
+
+    Output:
+        - A message box showing the informational message.
+
+    Returns:
+        None
+    """
         msg_box = QMessageBox()
         msg_box.setIcon(QMessageBox.Information)
         msg_box.setText(message)

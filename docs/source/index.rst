@@ -23,3 +23,4 @@ Welcome to School Management System's documentation!
    person
    course
    Tlinter_and_SQLite
+   PyQt_and_SQLite
